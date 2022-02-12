@@ -1,0 +1,395 @@
+---
+title: "Characteristics of the patient cohort"
+author: "Oleksandr_Petrenko"
+date: "21/12/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library("tidyverse")
+```
+
+
+```{r}
+setwd("..")
+getwd()
+```
+
+```{r}
+data <- readxl::read_xlsx("..")
+as.data.frame(data)
+```
+```{r datasets}
+vienna_dataset <- data %>%
+  filter(dataset == "VIENNA")
+
+external_dataset <- data %>%
+  filter(dataset != "VIENNA")
+
+external_dataset
+
+
+# HVPG subsets
+merged_hvpg_below_equal_15 <- data %>%
+  filter(HVPG <= 15.99)
+
+merged_hvpg_above_equal_16 <- data %>%
+  filter(HVPG >= 16.00)
+
+external_hvpg_below_equal_15 <- external_dataset %>%
+  filter(HVPG <= 15.99)
+
+external_hvpg_above_equal_16 <- external_dataset %>%
+  filter(HVPG >= 16.00)
+
+vienna_hvpg_below_equal_15 <- vienna_dataset %>%
+  filter(HVPG <= 15.99)
+
+vienna_hvpg_above_equal_16 <- vienna_dataset %>%
+  filter(HVPG >= 16.00)
+```
+
+Cohort characteristics
+
+```{r function}
+vienna_len <- 139
+external_len <- 840
+overall_len <- 979
+
+get_percentage_of_cohort <- function(number, cohort){
+  percentage = (number*100)/cohort
+  print(percentage)
+}
+
+get_patient_characteristic <- function(dataset, cohort){
+  dataset_name <- deparse(substitute(dataset))
+  number <- nrow(dataset)
+  print(sprintf("Characteristics of %s", dataset_name))
+  print(sprintf("Percentage of the cohort: %s", get_percentage_of_cohort(number = number, cohort = cohort)))
+  print(sprintf("length: %s", number))
+  print(summary(dataset))
+}
+```
+
+```{r HVPG}
+vienna_dataset_hvpg_below_equal_9 <- vienna_dataset %>%
+  filter(HVPG <= 9.9) %>%
+  select(HVPG)
+
+vienna_dataset_hvpg_10_to_15 <- vienna_dataset %>%
+  filter(between(HVPG,10, 15.99)) %>%
+  select(HVPG)
+
+vienna_dataset_hvpg_above_equal_16 <- vienna_dataset %>%
+  filter(HVPG >= 16) %>%
+  select(HVPG)
+
+external_dataset_hvpg_below_equal_9 <- external_dataset %>%
+  filter(HVPG <= 9.9) %>%
+  select(HVPG)
+
+external_dataset_hvpg_10_to_15 <- external_dataset %>%
+  filter(between(HVPG,10, 15.99)) %>%
+  select(HVPG)
+
+external_dataset_hvpg_above_equal_16 <- external_dataset %>%
+  filter(HVPG >= 16) %>%
+  select(HVPG)
+
+merged_dataset_hvpg_below_equal_9 <- data %>%
+  filter(HVPG <= 9.9) %>%
+  select(HVPG)
+
+merged_dataset_hvpg_10_to_15 <- data %>%
+  filter(between(HVPG,10, 15.99)) %>%
+  select(HVPG)
+
+merged_dataset_hvpg_above_equal_16 <- data %>%
+  filter(HVPG >= 16) %>%
+  select(HVPG)
+```
+
+```{r}
+vienna_hvpg_list <- list(vienna_dataset_hvpg_below_equal_9, vienna_dataset_hvpg_10_to_15, vienna_dataset_hvpg_above_equal_16)
+external_hvpg_list <- list(external_dataset_hvpg_below_equal_9, external_dataset_hvpg_10_to_15, external_dataset_hvpg_above_equal_16)
+merged_hvpg_list <- list(merged_dataset_hvpg_below_equal_9, merged_dataset_hvpg_10_to_15, merged_dataset_hvpg_above_equal_16)
+
+lapply(vienna_hvpg_list, get_patient_characteristic, vienna_len)
+lapply(external_hvpg_list, get_patient_characteristic, external_len)
+lapply(merged_hvpg_list, get_patient_characteristic, overall_len)
+
+```
+VCTE-LSM
+```{r}
+vienna_dataset_lsm_below_equal_14 <- vienna_dataset %>%
+  filter(`VCTE-LSM-kPa` <= 14.9) %>%
+  select(`VCTE-LSM-kPa`)
+
+vienna_dataset_lsm_15_to_24 <- vienna_dataset %>%
+  filter(between(`VCTE-LSM-kPa`, 15, 24.99)) %>%
+  select(`VCTE-LSM-kPa`)
+
+vienna_dataset_lsm_above_equal_25 <- vienna_dataset %>%
+  filter(`VCTE-LSM-kPa` >= 25) %>%
+  select(`VCTE-LSM-kPa`)
+
+external_dataset_lsm_below_equal_14 <- external_dataset %>%
+  filter(`VCTE-LSM-kPa` <= 14.9) %>%
+  select(`VCTE-LSM-kPa`)
+
+external_dataset_lsm_15_to_24 <- external_dataset %>%
+  filter(between(`VCTE-LSM-kPa`, 15, 24.99)) %>%
+  select(`VCTE-LSM-kPa`)
+
+external_dataset_lsm_above_equal_25 <- external_dataset %>%
+  filter(`VCTE-LSM-kPa` >= 25) %>%
+  select(`VCTE-LSM-kPa`)
+
+merged_dataset_lsm_below_equal_14 <- data %>%
+  filter(`VCTE-LSM-kPa` <= 14.9) %>%
+  select(`VCTE-LSM-kPa`)
+
+merged_dataset_lsm_15_to_24 <- data %>%
+  filter(between(`VCTE-LSM-kPa`, 15, 24.99)) %>%
+  select(`VCTE-LSM-kPa`)
+
+merged_dataset_lsm_above_equal_25 <- data %>%
+  filter(`VCTE-LSM-kPa` >= 25) %>%
+  select(`VCTE-LSM-kPa`)
+```
+
+```{r}
+vienna_lsm_list <- list(vienna_dataset_lsm_below_equal_14, vienna_dataset_lsm_15_to_24, vienna_dataset_lsm_above_equal_25)
+external_lsm_list <- list(external_dataset_lsm_below_equal_14, external_dataset_lsm_15_to_24, external_dataset_lsm_above_equal_25)
+merged_lsm_list <- list(merged_dataset_lsm_below_equal_14, merged_dataset_lsm_15_to_24, merged_dataset_lsm_above_equal_25)
+
+lapply(vienna_lsm_list, get_patient_characteristic, vienna_len)
+lapply(external_lsm_list, get_patient_characteristic, external_len)
+lapply(merged_lsm_list, get_patient_characteristic, overall_len)
+```
+MELD
+
+```{r}
+vienna_dataset_meld_6_to_11 <- vienna_dataset %>%
+  filter(between(`MELD-Score`, 6, 11.99)) %>%
+  select(`MELD-Score`)
+
+vienna_dataset_meld_12_to_15 <- vienna_dataset %>%
+  filter(between(`MELD-Score`, 12, 15.99)) %>%
+  select(`MELD-Score`)
+
+vienna_dataset_meld_above_equal_16 <- vienna_dataset %>%
+  filter(`MELD-Score` >= 16) %>%
+  select(`MELD-Score`)
+
+
+external_dataset_meld_6_to_11 <- external_dataset %>%
+  filter(between(`MELD-Score`, 6, 11.99)) %>%
+  select(`MELD-Score`)
+
+external_dataset_meld_12_to_15 <- external_dataset %>%
+  filter(between(`MELD-Score`, 12, 15.99)) %>%
+  select(`MELD-Score`)
+
+external_dataset_meld_above_equal_16 <- external_dataset %>%
+  filter(`MELD-Score` >= 16) %>%
+  select(`MELD-Score`)
+
+
+merged_dataset_meld_6_to_11 <- data %>%
+  filter(between(`MELD-Score`, 6, 11.99)) %>%
+  select(`MELD-Score`)
+
+merged_dataset_meld_12_to_15 <- data %>%
+  filter(between(`MELD-Score`, 12, 15.99)) %>%
+  select(`MELD-Score`)
+
+merged_dataset_meld_above_equal_16 <- data %>%
+  filter(`MELD-Score` >= 16) %>%
+  select(`MELD-Score`)
+
+```
+
+```{r}
+vienna_meld_list <- list(vienna_dataset_meld_6_to_11, vienna_dataset_meld_12_to_15, vienna_dataset_meld_above_equal_16)
+external_meld_list <- list(external_dataset_meld_6_to_11, external_dataset_meld_12_to_15, external_dataset_meld_above_equal_16)
+merged_meld_list <- list(merged_dataset_meld_6_to_11, merged_dataset_meld_12_to_15, merged_dataset_meld_above_equal_16)
+
+lapply(vienna_meld_list, get_patient_characteristic, vienna_len)
+lapply(external_meld_list, get_patient_characteristic, external_len)
+lapply(merged_meld_list, get_patient_characteristic, overall_len)
+```
+
+Laboratory parameters
+
+```{r merged}
+merged_hvpg_below_equal_15_plt <- merged_hvpg_below_equal_15 %>%
+  select(`PLT`)
+
+merged_hvpg_above_equal_16_plt <- merged_hvpg_above_equal_16 %>%
+  select(`PLT`)
+
+summary(merged_hvpg_below_equal_15_plt)
+summary(merged_hvpg_above_equal_16_plt)
+
+merged_hvpg_below_equal_15_bili <- merged_hvpg_below_equal_15 %>%
+  select(`BILI`)
+
+merged_hvpg_above_equal_16_bili <- merged_hvpg_above_equal_16 %>%
+  select(`BILI`)
+
+summary(merged_hvpg_below_equal_15_bili)
+summary(merged_hvpg_above_equal_16_bili)
+
+merged_hvpg_below_equal_15_che <- merged_hvpg_below_equal_15 %>%
+  select(`CHE`)
+
+merged_hvpg_above_equal_16_che <- merged_hvpg_above_equal_16 %>%
+  select(`CHE`)
+
+summary(merged_hvpg_below_equal_15_che)
+summary(merged_hvpg_above_equal_16_che)
+
+merged_hvpg_below_equal_15_ggt <- merged_hvpg_below_equal_15 %>%
+  select(`GGT`)
+
+merged_hvpg_above_equal_16_ggt <- merged_hvpg_above_equal_16 %>%
+  select(`GGT`)
+
+summary(merged_hvpg_below_equal_15_ggt)
+summary(merged_hvpg_above_equal_16_ggt)
+
+merged_hvpg_below_equal_15_aptt <- merged_hvpg_below_equal_15 %>%
+  select(`aPTT`)
+
+merged_hvpg_above_equal_16_aptt <- merged_hvpg_above_equal_16 %>%
+  select(`aPTT`)
+
+summary(merged_hvpg_below_equal_15_aptt)
+summary(merged_hvpg_above_equal_16_aptt)
+
+merged_hvpg_below_equal_15_inr <- merged_hvpg_below_equal_15 %>%
+  select(`INR`)
+
+merged_hvpg_above_equal_16_inr <- merged_hvpg_above_equal_16 %>%
+  select(`INR`)
+
+summary(merged_hvpg_below_equal_15_inr)
+summary(merged_hvpg_above_equal_16_inr)
+
+```
+
+```{r vienna}
+vienna_hvpg_below_equal_15_plt <- vienna_hvpg_below_equal_15 %>%
+  select(`PLT`)
+
+vienna_hvpg_above_equal_16_plt <- vienna_hvpg_above_equal_16 %>%
+  select(`PLT`)
+
+summary(vienna_hvpg_below_equal_15_plt)
+summary(vienna_hvpg_above_equal_16_plt)
+
+vienna_hvpg_below_equal_15_bili <- vienna_hvpg_below_equal_15 %>%
+  select(`BILI`)
+
+vienna_hvpg_above_equal_16_bili <- vienna_hvpg_above_equal_16 %>%
+  select(`BILI`)
+
+summary(vienna_hvpg_below_equal_15_bili)
+summary(vienna_hvpg_above_equal_16_bili)
+
+vienna_hvpg_below_equal_15_che <- vienna_hvpg_below_equal_15 %>%
+  select(`CHE`)
+
+vienna_hvpg_above_equal_16_che <- vienna_hvpg_above_equal_16 %>%
+  select(`CHE`)
+
+summary(vienna_hvpg_below_equal_15_che)
+summary(vienna_hvpg_above_equal_16_che)
+
+vienna_hvpg_below_equal_15_ggt <- vienna_hvpg_below_equal_15 %>%
+  select(`GGT`)
+
+vienna_hvpg_above_equal_16_ggt <- vienna_hvpg_above_equal_16 %>%
+  select(`GGT`)
+
+summary(vienna_hvpg_below_equal_15_ggt)
+summary(vienna_hvpg_above_equal_16_ggt)
+
+vienna_hvpg_below_equal_15_aptt <- vienna_hvpg_below_equal_15 %>%
+  select(`aPTT`)
+
+vienna_hvpg_above_equal_16_aptt <- vienna_hvpg_above_equal_16 %>%
+  select(`aPTT`)
+
+summary(vienna_hvpg_below_equal_15_aptt)
+summary(vienna_hvpg_above_equal_16_aptt)
+
+vienna_hvpg_below_equal_15_inr <- vienna_hvpg_below_equal_15 %>%
+  select(`INR`)
+
+vienna_hvpg_above_equal_16_inr <- vienna_hvpg_above_equal_16 %>%
+  select(`INR`)
+
+summary(vienna_hvpg_below_equal_15_inr)
+summary(vienna_hvpg_above_equal_16_inr)
+```
+
+```{r external}
+external_hvpg_below_equal_15_plt <- external_hvpg_below_equal_15 %>%
+  select(`PLT`)
+
+external_hvpg_above_equal_16_plt <- external_hvpg_above_equal_16 %>%
+  select(`PLT`)
+
+summary(external_hvpg_below_equal_15_plt)
+summary(external_hvpg_above_equal_16_plt)
+
+external_hvpg_below_equal_15_bili <- external_hvpg_below_equal_15 %>%
+  select(`BILI`)
+
+external_hvpg_above_equal_16_bili <- external_hvpg_above_equal_16 %>%
+  select(`BILI`)
+
+summary(external_hvpg_below_equal_15_bili)
+summary(external_hvpg_above_equal_16_bili)
+
+external_hvpg_below_equal_15_che <- external_hvpg_below_equal_15 %>%
+  select(`CHE`)
+
+external_hvpg_above_equal_16_che <- external_hvpg_above_equal_16 %>%
+  select(`CHE`)
+
+summary(external_hvpg_below_equal_15_che)
+summary(external_hvpg_above_equal_16_che)
+
+external_hvpg_below_equal_15_ggt <- external_hvpg_below_equal_15 %>%
+  select(`GGT`)
+
+external_hvpg_above_equal_16_ggt <- external_hvpg_above_equal_16 %>%
+  select(`GGT`)
+
+summary(external_hvpg_below_equal_15_ggt)
+summary(external_hvpg_above_equal_16_ggt)
+
+external_hvpg_below_equal_15_aptt <- external_hvpg_below_equal_15 %>%
+  select(`aPTT`)
+
+external_hvpg_above_equal_16_aptt <- external_hvpg_above_equal_16 %>%
+  select(`aPTT`)
+
+summary(external_hvpg_below_equal_15_aptt)
+summary(external_hvpg_above_equal_16_aptt)
+
+external_hvpg_below_equal_15_inr <- external_hvpg_below_equal_15 %>%
+  select(`INR`)
+
+external_hvpg_above_equal_16_inr <- external_hvpg_above_equal_16 %>%
+  select(`INR`)
+
+summary(external_hvpg_below_equal_15_inr)
+summary(external_hvpg_above_equal_16_inr)
+```
+
