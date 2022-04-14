@@ -10,4 +10,5 @@ The performance of 5 machine learning models predicting HVPG >= 16 was compared,
 
 In the second part of the project, we validated our model on a large set of 840 patients from 7 clinical institutions. The best performing models reached an AUC score of 0.811 (5 parameters used) and 0.745 (PLT, BILI, aPTT).
 
-Details will be available in a publication that has been submitted. As a companion, we have also developed an online calculator for the [HVPG16 online calculator](https://liver.at/vlsg/hvpg16/)
+Details will be available in a publication that has been submitted. As a companion, we have also developed an online HVPG predictor:
+[online calculator](https://liver.at/vlsg/hvpg16/)
