@@ -1,6 +1,6 @@
 # Prediction of HVPG in patients with liver cirrhosis
 
-Code repository for the manuscript _Machine learning models for the assessment of portal hypertension based on standard laboratory tests in patients with compensated cirrhosis_ (currently in submission).
+Code repository for the manuscript **Machine learning models for the assessment of portal hypertension based on standard laboratory tests in patients with compensated cirrhosis** (currently in submission).
 
 <p align="left"><img src="HVPG16_graphical_abstract.svg " width="600"/></p>
 
