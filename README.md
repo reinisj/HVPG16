@@ -2,7 +2,7 @@
 
 Code repository for the manuscript **Machine learning models for the assessment of portal hypertension based on standard laboratory tests in patients with compensated cirrhosis** (currently in submission).
 
-<p align="left"><img src="HVPG16_graphical_abstract.svg " width="600"/></p>
+<p align="left"><img src="graphical_abstract.png " width="600"/></p>
 
 **Hepatic venous pressure gradient (HVPG)** is an important prognosis marker in advanced chronic liver disease (cirrhosis). An HVPG value equal to or above 16 mmHg indicates high probability of serious complications (decompensation). Because HVPG is measured by an invasive procedure, its prediction from other clinical parameters is highly desirable.
 
