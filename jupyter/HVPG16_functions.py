@@ -113,7 +113,7 @@ def get_AUC_CV(clf, cv, X, y):
     return aucs
 
  
-def test_models_variables(data, models, names, variables, n_cv=1, cohort="merged", balance=False,
+def test_models_variables(data, models, names, variables, n_cv=1, cohort="merged", HVPG_threshold=16, balance=False,
                           title="", analyze=False, save_folder_AUCs=None, save_folder_plots=None):
     """
     For a given set of independent variables, run CVs and compare prediction performance of the provided models, optionally only for a specific subset (cohort) of the dataset. Returns AUC scores from all CVs and fold for each model per fold, and statistics (mean/median AUC values + confidence intervals). If the balance flag is set, randomly sample the same number of records for both the minority and majority class.
@@ -158,7 +158,7 @@ def test_models_variables(data, models, names, variables, n_cv=1, cohort="merged
     # balance the dataset if desired
     if balance:
         # split the data between low-risk and high-risk
-        low_high_risk_separate = (data_subset[data_subset["HVPG"]<16].copy(), data_subset[data_subset["HVPG"]>=16].copy())
+        low_high_risk_separate = (data_subset[data_subset["HVPG"]<HVPG_threshold].copy(), data_subset[data_subset["HVPG"]>=HVPG_threshold].copy())
         # figure out which group is smaller
         larger_grp_idx = np.argmax((low_high_risk_separate[0].shape[0], low_high_risk_separate[1].shape[0]))
         smaller_grp_idx = np.argmin((low_high_risk_separate[0].shape[0], low_high_risk_separate[1].shape[0]))    
@@ -169,10 +169,10 @@ def test_models_variables(data, models, names, variables, n_cv=1, cohort="merged
     # trick to report if there was balancing
     report_dict = {False: "no", True: "after"}
 
-    print(f'{len(variables)} variables ({", ".join(variables)}), {cohort} cohort(s), {data_subset.shape[0]} patients ({report_dict[balance]} balancing), {n_cv} cross-validation(s)\n')  
+    print(f'HVPG threshold {HVPG_threshold} mmHg, {len(variables)} variables ({", ".join(variables)}), {cohort} cohort(s), {data_subset.shape[0]} patients ({report_dict[balance]} balancing), {n_cv} cross-validation(s)\n')  
             
     X = data_subset[variables]
-    y = 1*(data_subset["HVPG"]>=16)
+    y = 1*(data_subset["HVPG"]>=HVPG_threshold)
     
     AUCs, mean_AUCs = repeat_CV_get_AUC(models, names, n_cv, X, y)
     print()
@@ -180,6 +180,8 @@ def test_models_variables(data, models, names, variables, n_cv=1, cohort="merged
     
     # add info to the title
     if title:
+        if HVPG_threshold != 0:
+            title = f"HVPG{HVPG_threshold}, " + title
         title += f", {cohort} cohort ("  
         if balance:
             title += "balanced, "
@@ -257,7 +259,7 @@ def analyze_mean_AUCs(AUCs, n, title="", save_folder=None):
     plt.show()    
     
 
-def train_one_cohort_validate_rest(data, models, names, variables, train_cohort="VIENNA", plot_cohorts=True):
+def train_one_cohort_validate_rest(data, models, names, variables, train_cohort="VIENNA", plot_cohorts=True, HVPG_thres = 16):
     """
     Train models on one cohort and validate on the rest. Report AUC scores for each model for separate cohorts.
 
@@ -276,11 +278,12 @@ def train_one_cohort_validate_rest(data, models, names, variables, train_cohort=
     plot_cohorts : string
         Show distribution of labels in the different cohorts for the current parameter setting.
 
-    """
+    """   
     plt.rcParams['font.size'] = 14
     data_subset = data[["HVPG", "dataset"] + variables].copy()
-    data_subset["HVPG_label"] = "HVPG < 16"
-    data_subset.loc[data_subset.HVPG >= 16, 'HVPG_label'] = "HVPG ≥ 16"
+    data_subset["HVPG_label"] = f"HVPG < {HVPG_thres}"
+    data_subset.loc[data_subset.HVPG >= HVPG_thres, 'HVPG_label'] = f"HVPG ≥ {HVPG_thres}"
+    
     
     # remove patients with incomplete records for the required parameters
     for variable in ["HVPG"] + variables:
@@ -292,25 +295,25 @@ def train_one_cohort_validate_rest(data, models, names, variables, train_cohort=
     
     # show some info/stats about the subset of the data
     total_patients = len(data_subset)
-    low_risk = 1*(data_subset["HVPG"]>=16).value_counts().iloc[0]
-    high_risk = 1*(data_subset["HVPG"]>=16).value_counts().iloc[1]
+    low_risk = 1*(data_subset["HVPG"]>=HVPG_thres).value_counts().iloc[0]
+    high_risk = 1*(data_subset["HVPG"]>=HVPG_thres).value_counts().iloc[1]
     
-    print(f'{len(variables)} variables ({", ".join(variables)}), trained on: {train_cohort}, {total_patients} patients, {low_risk} HVPG<16, {high_risk} HVPG>=16')  
+    print(f'{len(variables)} variables ({", ".join(variables)}), trained on: {train_cohort}, {total_patients} patients, {low_risk} HVPG<{HVPG_thres}, {high_risk} HVPG>={HVPG_thres}')  
     train = data_subset[data_subset["dataset"] == train_cohort]
     validate = [data_subset[data_subset["dataset"] == name] for name in cohorts]
     
     if plot_cohorts:
         plt.figure(figsize=(5,5))
-        sns.countplot(y = 'dataset', data = data_subset, hue = "HVPG_label").set_title(f'Patients with {", ".join(variables)} measurements')
+        sns.countplot(y = 'dataset', data = data_subset, hue = "HVPG_label").set_title(f'HVPG{HVPG_thres}, patients with {", ".join(variables)} measurements')
         plt.xlabel(None)
         plt.ylabel(None)
         plt.show()
     
     X_train = train[variables]
-    y_train = 1*(train["HVPG"]>=16)
+    y_train = 1*(train["HVPG"]>=HVPG_thres)
     
     X_validate = [cohort_data[variables] for cohort_data in validate]
-    y_validate = [1*(cohort_data["HVPG"]>=16) for cohort_data in validate]
+    y_validate = [1*(cohort_data["HVPG"]>=HVPG_thres) for cohort_data in validate]
 
     
     result = []
