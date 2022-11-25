@@ -22,4 +22,4 @@ Here, the top-performing model was logistic regression in the 5P setting, reachi
 In the second part of the project, we validated our model on a large set of 1232 patients from 7 clinical institutions, now both in the HVPG ≥ 10 and HVPG ≥ 16 settings. The best performing model reached AUC scores of 0.773 in the HVPG10 setting (logistic regression, 3P) and 0.812 in HVP16 (logistic regression, 5P).
 
 As a companion to the paper, we have also developed an online HVPG predictor, available here:
-[online calculator](https://liver.at/vlsg/hvpg16/)
+[online calculator](https://liver.at/vlsg/hvpg-calculator/)
